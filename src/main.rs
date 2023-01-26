@@ -1,6 +1,8 @@
 use rand::Rng;
 use std::{cmp::Ordering, io};
 
+use crate::guess::Guess;
+
 fn main() {
     let mut is_game_over = false;
     let rn = generate_rn();
@@ -13,13 +15,15 @@ fn main() {
         io::stdin()
             .read_line(&mut guess)
             .expect("Failed to read line");
-        let guess: u32 = match guess.trim().parse() {
+        let guess: i32 = match guess.trim().parse() {
             Ok(num) => num,
             Err(_) => continue,
         };
         println!("guess is {}", &guess);
 
-        match guess.cmp(&rn) {
+        let guess: Guess = Guess::new(guess);
+
+        match guess.value().cmp(&rn) {
             Ordering::Less => println!("Too small!"),
             Ordering::Greater => println!("Too big!"),
             Ordering::Equal => {
@@ -32,13 +36,16 @@ fn main() {
     println!("Game over! Guess is {}", &guess);
 }
 
-fn generate_rn() -> u32 {
+fn generate_rn() -> i32 {
     let mut rng = rand::thread_rng();
 
     let rn = rng.gen_range(1..=100);
     println!("generated random number is {}", rn);
+
     rn
 }
+
+mod guess;
 
 // fn accept_input() -> u32 {
 //     println!("Enter your guess:");
